@@ -1,0 +1,176 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+model User {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  password String
+  role     Role     @default(CUSTOMER)
+  products Product[]
+  orders   Order[]
+  customRequests CustomRequest[]
+  affiliateReferrals AffiliateReferral[]
+  walletTransactions WalletTransaction[]
+  payoutRequests PayoutRequest[]
+  aiServiceLogs AIServiceLog[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "users")
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+  AFFILIATE
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  orderItems  OrderItem[]
+  customRequests CustomRequest[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map(name: "products")
+}
+
+model Order {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+  total      Float
+  status     OrderStatus
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map(name: "orders")
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
+
+model OrderItem {
+  id       String   @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "order_items")
+}
+
+model CustomRequest {
+  id       String   @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  message   String
+  status    CustomRequestStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "custom_requests")
+}
+
+enum CustomRequestStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
+
+model AffiliateReferral {
+  id       String   @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  referralId String
+  referral  User    @relation(fields: [referralId], references: [id])
+  commission Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "affiliate_referrals")
+}
+
+model WalletTransaction {
+  id       String   @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  amount    Float
+  type      WalletTransactionType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "wallet_transactions")
+}
+
+enum WalletTransactionType {
+  DEPOSIT
+  WITHDRAWAL
+}
+
+model PayoutRequest {
+  id       String   @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  amount    Float
+  status    PayoutRequestStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "payout_requests")
+}
+
+enum PayoutRequestStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
+
+model AIServiceLog {
+  id       String   @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  aiService String
+  input     String
+  output    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "ai_service_logs")
+}
+
+model AnalyticsLog {
+  id       String   @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  event     String
+  metadata  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "analytics_logs")
+}
