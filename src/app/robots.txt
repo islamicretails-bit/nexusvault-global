@@ -1,0 +1,28 @@
+# robots.txt for NexusVault Global Enterprise / MystoriumX AI Studio
+
+# Introduction
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /vendor/
+Disallow: /affiliate/
+Disallow: /office/
+Disallow: /dashboard/
+
+# Allow crawling of public pages
+Allow: /
+Allow: /marketplace/
+Allow: /products/
+Allow: /about/
+Allow: /contact/
+Allow: /terms/
+Allow: /privacy/
+
+# Sitemap
+Sitemap: https://example.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 10
+Note: Replace `https://example.com/sitemap.xml` with the actual URL of your sitemap.
+
+This `robots.txt` file is designed to prevent search engines from crawling sensitive areas of the site, such as the API, admin, vendor, and affiliate sections, while allowing them to crawl public pages. The `Sitemap` directive points to the location of the site's sitemap, and the `Crawl-delay` directive specifies the delay between successive crawls.
