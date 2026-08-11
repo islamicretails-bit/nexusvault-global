@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/app/**/*",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/app/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/app/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; object-src 'none'"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "production": {
+      "DATABASE_URL": "@vercel/env",
+      "NEXT_PUBLIC_API_URL": "@vercel/env",
+      "NEXT_PUBLIC_CLOUDFLARE_R2_BUCKET": "@vercel/env",
+      "NEXT_PUBLIC_CLOUDFLARE_R2_ACCESS_KEY_ID": "@vercel/env",
+      "NEXT_PUBLIC_CLOUDFLARE_R2_SECRET_ACCESS_KEY": "@vercel/env"
+    }
+  }
+}
